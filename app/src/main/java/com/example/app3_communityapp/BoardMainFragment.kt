@@ -90,7 +90,8 @@ class BoardMainFragment : Fragment() {
         inner class ViewHolderClass(boardMainRecyclerItemBinding: BoardMainRecyclerItemBinding) :
             RecyclerView.ViewHolder(boardMainRecyclerItemBinding.root), View.OnClickListener {
             override fun onClick(v: View?) {
-
+                val act = activity as BoardMainActivity
+                act.fragmentController("board_read",true,true)
             }
         }
     }

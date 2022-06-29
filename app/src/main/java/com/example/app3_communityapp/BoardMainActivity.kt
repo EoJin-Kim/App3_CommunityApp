@@ -3,6 +3,7 @@ package com.example.app3_communityapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.example.app3_communityapp.databinding.ActivityBoardMainBinding
 
@@ -26,6 +27,9 @@ class BoardMainActivity : AppCompatActivity() {
             "board_main" ->{
                 currentFragment = BoardMainFragment()
             }
+            "board_read" -> {
+                currentFragment = BoardReadFragment()
+            }
         }
 
         val trans = supportFragmentManager.beginTransaction()
@@ -39,6 +43,10 @@ class BoardMainActivity : AppCompatActivity() {
         }
 
         trans.commit()
+    }
+
+    fun fragmentRemoveBackStack(name: String){
+        supportFragmentManager.popBackStack(name,FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
 
 }
