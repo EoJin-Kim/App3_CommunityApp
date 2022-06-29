@@ -1,5 +1,6 @@
 package com.example.app3_communityapp
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +16,9 @@ import com.example.app3_communityapp.databinding.FragmentBoardMainBinding
 class BoardMainFragment : Fragment() {
 
     lateinit var boardMainFragemntBinding : FragmentBoardMainBinding
+    val boardListData = arrayOf(
+        "전체글","게시판1","게시판2","게시판3","게시판4",
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +32,24 @@ class BoardMainFragment : Fragment() {
         // Inflate the layout for this fragment
         boardMainFragemntBinding = FragmentBoardMainBinding.inflate(inflater)
         boardMainFragemntBinding.boardMainToolbar.title = "게시판이름"
+
+        boardMainFragemntBinding.boardMainToolbar.inflateMenu(R.menu.board_main_menu)
+        boardMainFragemntBinding.boardMainToolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.board_main_menu_board_list ->{
+                    val boardListBuilder = AlertDialog.Builder(requireContext())
+                    boardListBuilder.setTitle("게시판 목록")
+                    boardListBuilder.setNegativeButton("취소",null)
+                    boardListBuilder.setItems(boardListData,null)
+                    boardListBuilder.show()
+                    true
+                }
+                else -> false
+            }
+            true
+        }
+
+
 
         val boardMainRecyclerAdapter = BoardMainRecyclerAdapter()
         boardMainFragemntBinding.boardMainRecycler.adapter = boardMainRecyclerAdapter
