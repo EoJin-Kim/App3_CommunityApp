@@ -1,5 +1,6 @@
 package com.example.app3_communityapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -25,6 +26,12 @@ class NickNameFragment : Fragment() {
         nickNameFragmentBinding = FragmentNickNameBinding.inflate(inflater)
 
         nickNameFragmentBinding.nicknameToolbar.title = "닉네임 임력"
+
+        nickNameFragmentBinding.nicknameJoinBtn.setOnClickListener {
+            val mainIntent = Intent(requireContext(),MainActivity::class.java)
+            startActivity(mainIntent)
+            activity?.finish()
+        }
 
         return nickNameFragmentBinding.root
     }

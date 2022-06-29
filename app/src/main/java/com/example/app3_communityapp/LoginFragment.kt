@@ -1,5 +1,6 @@
 package com.example.app3_communityapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -29,6 +30,12 @@ class LoginFragment : Fragment() {
         loginFragmentBinding.loginJoinbtn.setOnClickListener {
             val act = activity as MainActivity
             act.fragmentController("join",true,true)
+        }
+
+        loginFragmentBinding.loginLoginbtn.setOnClickListener {
+            val boardMainIntent = Intent(requireContext(),BoardMainActivity::class.java)
+            startActivity(boardMainIntent)
+            activity?.finish()
         }
 
         return loginFragmentBinding.root
