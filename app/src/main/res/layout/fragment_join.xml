@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".LoginFragment" >
+    tools:context=".JoinFragment" >
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/login_toolbar"
+        android:id="@+id/join_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -21,14 +21,14 @@
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="아이디"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <EditText
-            android:id="@+id/login_id"
+            android:id="@+id/join_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -40,14 +40,14 @@
             android:layout_height="10dp" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="비밀번호"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <EditText
-            android:id="@+id/login_pw"
+            android:id="@+id/join_pw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -58,44 +58,17 @@
             android:layout_width="match_parent"
             android:layout_height="10dp" />
 
-        <CheckBox
-            android:id="@+id/login_autologin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="자동 로그인" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp" />
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/login_loginbtn"
+                android:id="@+id/join_next_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:text="로그인"
+                android:text="다음"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
         </FrameLayout>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp" />
-        
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/black"/>
-
-        <Button
-            android:id="@+id/login_joinbtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="회원가입"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
     </LinearLayout>
 </LinearLayout>

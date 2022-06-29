@@ -30,7 +30,12 @@ class MainActivity : AppCompatActivity() {
             "login" -> {
                 currentFragment = LoginFragment()
             }
-
+            "join" -> {
+                currentFragment = JoinFragment()
+            }
+            "nick_name" ->{
+                currentFragment = NickNameFragment()
+            }
 
         }
 

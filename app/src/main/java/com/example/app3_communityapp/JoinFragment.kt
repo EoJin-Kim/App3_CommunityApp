@@ -5,15 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.app3_communityapp.databinding.FragmentLoginBinding
+import com.example.app3_communityapp.databinding.FragmentJoinBinding
 
 
-class LoginFragment : Fragment() {
+class JoinFragment : Fragment() {
 
-    lateinit var loginFragmentBinding : FragmentLoginBinding
+    lateinit var joinFragmentBinding: FragmentJoinBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(
@@ -21,18 +22,14 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        joinFragmentBinding = FragmentJoinBinding.inflate(inflater)
+        joinFragmentBinding.joinToolbar.title = "회원가입"
 
-        loginFragmentBinding = FragmentLoginBinding.inflate(inflater)
-
-        loginFragmentBinding.loginToolbar.title = "로그인"
-
-        loginFragmentBinding.loginJoinbtn.setOnClickListener {
+        joinFragmentBinding.joinNextBtn.setOnClickListener {
             val act = activity as MainActivity
-            act.fragmentController("join",true,true)
+            act.fragmentController("nick_name",true,true)
         }
 
-        return loginFragmentBinding.root
+        return joinFragmentBinding.root
     }
-
-
 }
