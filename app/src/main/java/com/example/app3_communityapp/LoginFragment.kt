@@ -87,6 +87,7 @@ class LoginFragment : Fragment() {
                 val builder1 = FormBody.Builder()
                 builder1.add("user_id",loginId)
                 builder1.add("user_pw",loginPw)
+                builder1.add("user_autologin","$loginAutoLogin")
                 val formBody = builder1.build()
 
                 val request = Request.Builder().url(site).post(formBody).build()
@@ -124,6 +125,7 @@ class LoginFragment : Fragment() {
 
                                 editor?.putInt("login_user_idx",Integer.parseInt(result_test))
                                 editor?.putInt("login_auto_login",loginAutoLogin)
+                                editor?.commit()
 
                                 val boardMainIntent = Intent(requireContext(),BoardMainActivity::class.java)
                                 startActivity(boardMainIntent)
