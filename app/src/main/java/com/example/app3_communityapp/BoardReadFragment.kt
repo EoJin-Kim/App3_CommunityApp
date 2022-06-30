@@ -50,6 +50,25 @@ class BoardReadFragment : Fragment() {
             act.fragmentRemoveBackStack("board_read")
         }
 
+        boardReadFragmentBinding.boardReadToolbar.inflateMenu(R.menu.board_read_menu)
+
+        boardReadFragmentBinding.boardReadToolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.board_read_menu_modify -> {
+                    true
+                }
+                R.id.board_read_menu_delete -> {
+                    val act = activity as BoardMainActivity
+                    act.fragmentRemoveBackStack("board_read")
+                    true
+                }
+
+
+                else -> false
+
+            }
+        }
+
         return boardReadFragmentBinding.root
     }
 
