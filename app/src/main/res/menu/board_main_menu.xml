@@ -7,4 +7,9 @@
         android:icon="@android:drawable/ic_menu_more"
         android:title="게시판 목록"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/board_main_menu_write"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="글 작성하기"
+        app:showAsAction="always" />
 </menu>

@@ -44,6 +44,13 @@ class BoardMainFragment : Fragment() {
                     boardListBuilder.show()
                     true
                 }
+
+                R.id.board_main_menu_write -> {
+                    val act = activity as BoardMainActivity
+                    act.fragmentController("board_write",true,true)
+                    true
+                }
+
                 else -> false
             }
             true
