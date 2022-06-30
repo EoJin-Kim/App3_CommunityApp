@@ -33,6 +33,9 @@ class BoardMainActivity : AppCompatActivity() {
             "board_write" -> {
                 currentFragment = BoardWriteFragment()
             }
+            "board_modify" -> {
+                currentFragment = BoardModifyFragment()
+            }
         }
 
         val trans = supportFragmentManager.beginTransaction()

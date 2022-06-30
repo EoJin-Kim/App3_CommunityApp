@@ -8,11 +8,13 @@
         <entry key="..\:/and/App3_CommunityApp/app/src/main/res/layout/activity_main.xml" value="0.15" />
         <entry key="..\:/and/App3_CommunityApp/app/src/main/res/layout/board_main_recycler_item.xml" value="0.25" />
         <entry key="..\:/and/App3_CommunityApp/app/src/main/res/layout/fragment_board_main.xml" value="0.1875" />
+        <entry key="..\:/and/App3_CommunityApp/app/src/main/res/layout/fragment_board_modify.xml" value="0.2972222222222222" />
         <entry key="..\:/and/App3_CommunityApp/app/src/main/res/layout/fragment_board_write.xml" value="0.2972222222222222" />
         <entry key="..\:/and/App3_CommunityApp/app/src/main/res/layout/fragment_join.xml" value="0.2814814814814815" />
         <entry key="..\:/and/App3_CommunityApp/app/src/main/res/layout/fragment_login.xml" value="0.2814814814814815" />
         <entry key="..\:/and/App3_CommunityApp/app/src/main/res/layout/fragment_nick_name.xml" value="0.2814814814814815" />
         <entry key="..\:/and/App3_CommunityApp/app/src/main/res/menu/board_main_menu.xml" value="0.2972222222222222" />
+        <entry key="..\:/and/App3_CommunityApp/app/src/main/res/menu/board_modify_menu.xml" value="0.2972222222222222" />
         <entry key="..\:/and/App3_CommunityApp/app/src/main/res/menu/board_read_menu.xml" value="0.2972222222222222" />
         <entry key="..\:/and/App3_CommunityApp/app/src/main/res/menu/board_write_menu.xml" value="0.2972222222222222" />
       </map>

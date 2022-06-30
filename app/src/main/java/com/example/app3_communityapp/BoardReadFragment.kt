@@ -55,6 +55,8 @@ class BoardReadFragment : Fragment() {
         boardReadFragmentBinding.boardReadToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.board_read_menu_modify -> {
+                    val act = activity as BoardMainActivity
+                    act.fragmentController("board_modify", true,true)
                     true
                 }
                 R.id.board_read_menu_delete -> {
