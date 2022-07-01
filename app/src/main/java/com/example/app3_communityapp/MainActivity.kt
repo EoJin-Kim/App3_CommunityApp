@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                 builder1.add("login_user_idx","$login_user_idx")
                 val formBody = builder1.build()
 
-                val site = "http://219.248.58.57:8080/check_auto_login"
+                val site = "http://${ServerInfo.SERVER_IP}:8080/check_auto_login"
 
                 val request = Request.Builder().url(site).post(formBody).build()
                 val response = client.newCall(request).execute()

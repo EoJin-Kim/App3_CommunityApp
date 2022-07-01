@@ -1,6 +1,7 @@
 package com.example.app3_communityapp
 
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -29,18 +30,26 @@ class BoardMainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val act = activity as BoardMainActivity
+
         // Inflate the layout for this fragment
         boardMainFragemntBinding = FragmentBoardMainBinding.inflate(inflater)
-        boardMainFragemntBinding.boardMainToolbar.title = "게시판이름"
+        boardMainFragemntBinding.boardMainToolbar.title = act.boardNameList[act.selectedBoardType];
 
         boardMainFragemntBinding.boardMainToolbar.inflateMenu(R.menu.board_main_menu)
         boardMainFragemntBinding.boardMainToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.board_main_menu_board_list ->{
+
+                    val act = activity as BoardMainActivity
+
                     val boardListBuilder = AlertDialog.Builder(requireContext())
                     boardListBuilder.setTitle("게시판 목록")
                     boardListBuilder.setNegativeButton("취소",null)
-                    boardListBuilder.setItems(boardListData,null)
+                    boardListBuilder.setItems(act.boardNameList.toTypedArray()){ dialogInterface: DialogInterface, i: Int ->
+                        act.selectedBoardType = i
+                        boardMainFragemntBinding.boardMainToolbar.title = act.boardNameList[act.selectedBoardType]
+                    }
                     boardListBuilder.show()
                     true
                 }

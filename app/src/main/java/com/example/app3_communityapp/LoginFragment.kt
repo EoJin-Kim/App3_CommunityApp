@@ -82,7 +82,7 @@ class LoginFragment : Fragment() {
             thread {
                 val client =OkHttpClient()
 
-                val site = "http://219.248.58.57:8080/login_user"
+                val site = "http://${ServerInfo.SERVER_IP}:8080/login_user"
 
                 val builder1 = FormBody.Builder()
                 builder1.add("user_id",loginId)

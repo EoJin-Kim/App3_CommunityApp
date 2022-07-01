@@ -57,7 +57,7 @@ class NickNameFragment : Fragment() {
             thread {
                 val client = OkHttpClient()
 
-                val site = "http://219.248.58.57:8080/join_user"
+                val site = "http://${ServerInfo.SERVER_IP}:8080/join_user"
 
                 // 서버로 보낼데이터를 셋팅한다
                 val builder1 = FormBody.Builder()
