@@ -1,6 +1,7 @@
 package com.example.app3_communityapp
 
 import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
@@ -13,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import com.example.app3_communityapp.databinding.FragmentBoardMainBinding
 import com.example.app3_communityapp.databinding.FragmentBoardWriteBinding
@@ -78,6 +80,32 @@ class BoardWriteFragment : Fragment() {
                 }
                 R.id.board_write_menu_upload ->{
                     val act = activity as BoardMainActivity
+
+                    val boardWriteSubject = boardWriteFragmentBinding.boardWriteSubject.text.toString()
+                    val boardWriteText = boardWriteFragmentBinding.boardWriteText.text.toString()
+
+                    if (boardWriteSubject == null || boardWriteSubject.length == 0) {
+                        val dialogBuilder = AlertDialog.Builder(requireContext())
+                        dialogBuilder.setTitle("제목 입력 오류")
+                        dialogBuilder.setMessage("제목을 입력해 주세요")
+                        dialogBuilder.setPositiveButton("확인"){ dialogInterface: DialogInterface, i: Int ->
+                            boardWriteFragmentBinding.boardWriteSubject.requestFocus()
+                        }
+                        dialogBuilder.show()
+                        return@setOnMenuItemClickListener  true
+                    }
+
+                    if (boardWriteText == null || boardWriteText.length == 0) {
+                        val dialogBuilder = AlertDialog.Builder(requireContext())
+                        dialogBuilder.setTitle("내용 입력 오류")
+                        dialogBuilder.setMessage("내용 입력해 주세요")
+                        dialogBuilder.setPositiveButton("확인"){ dialogInterface: DialogInterface, i: Int ->
+                            boardWriteFragmentBinding.boardWriteText.requestFocus()
+                        }
+                        dialogBuilder.show()
+                        return@setOnMenuItemClickListener  true
+                    }
+
                     act.fragmentRemoveBackStack("board_write")
                     act.fragmentController("board_read",true,true)
                     true
