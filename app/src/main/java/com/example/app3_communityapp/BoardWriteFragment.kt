@@ -1,6 +1,7 @@
 package com.example.app3_communityapp
 
 import android.app.Activity
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -13,12 +14,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import com.example.app3_communityapp.databinding.FragmentBoardMainBinding
 import com.example.app3_communityapp.databinding.FragmentBoardWriteBinding
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.File
+import kotlin.concurrent.thread
 
 
 class BoardWriteFragment : Fragment() {
@@ -83,6 +89,11 @@ class BoardWriteFragment : Fragment() {
 
                     val boardWriteSubject = boardWriteFragmentBinding.boardWriteSubject.text.toString()
                     val boardWriteText = boardWriteFragmentBinding.boardWriteText.text.toString()
+                    val boardWriteType = act.boardIndexList[boardWriteFragmentBinding.boardWriteType.selectedItemPosition +1]
+
+                    val pref = requireContext().getSharedPreferences("login_data",Context.MODE_PRIVATE)
+                    val boardWriterIdx = pref.getInt("login_user_idx",0)
+
 
                     if (boardWriteSubject == null || boardWriteSubject.length == 0) {
                         val dialogBuilder = AlertDialog.Builder(requireContext())
@@ -104,6 +115,55 @@ class BoardWriteFragment : Fragment() {
                         }
                         dialogBuilder.show()
                         return@setOnMenuItemClickListener  true
+                    }
+
+                    thread {
+                        val clinet = OkHttpClient()
+
+                        val site = "http://${ServerInfo.SERVER_IP}:8080/add_content"
+                        val builder1 = FormBody.Builder()
+                        builder1.add("content_board_idx","$boardWriteType")
+                        builder1.add("content_writer_idx","$boardWriterIdx")
+                        builder1.add("content_subject",boardWriteSubject)
+                        builder1.add("content_text",boardWriteText)
+                        val formBody = builder1.build()
+
+                        val request = Request.Builder().url(site).post(formBody).build()
+                        val response = clinet.newCall(request).execute()
+
+                        if (response.isSuccessful) {
+                            activity?.runOnUiThread {
+                                val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                // 포커스 해제
+                                inputMethodManager.hideSoftInputFromWindow(
+                                    boardWriteFragmentBinding.boardWriteSubject.windowToken,
+                                    0
+                                )
+                                inputMethodManager.hideSoftInputFromWindow(
+                                    boardWriteFragmentBinding.boardWriteText.windowToken,
+                                    0
+                                )
+
+                                val dialogBuilder = AlertDialog.Builder(requireContext())
+                                dialogBuilder.setTitle("작성 완료")
+                                dialogBuilder.setMessage("작성이 완료되었습니다")
+                                dialogBuilder.setPositiveButton("확인") { dialogInterface: DialogInterface, i: Int ->
+                                    act.fragmentRemoveBackStack("board_writer")
+                                    act.fragmentController("board_read", true, true)
+                                }
+                                dialogBuilder.show()
+                            }
+
+                        } else {
+                            activity?.runOnUiThread {
+                                val dialogBuilder = AlertDialog.Builder(requireContext())
+                                dialogBuilder.setTitle("작성 오류")
+                                dialogBuilder.setMessage("작성 오류가 발생하였습니다")
+                                dialogBuilder.setPositiveButton("확인",null)
+                                dialogBuilder.show()
+                            }
+                        }
+
                     }
 
                     act.fragmentRemoveBackStack("board_write")
