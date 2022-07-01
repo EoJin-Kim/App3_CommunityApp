@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -153,6 +154,11 @@ class BoardWriteFragment : Fragment() {
                         val response = clinet.newCall(request).execute()
 
                         if (response.isSuccessful) {
+
+                            val resultText = response.body?.string()!!.trim()
+                            act.readContentIdx = Integer.parseInt(resultText)
+                            Log.d("test","${act.readContentIdx}")
+
                             act?.runOnUiThread {
                                 val inputMethodManager = act!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                 // 포커스 해제

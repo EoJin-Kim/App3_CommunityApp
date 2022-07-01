@@ -21,6 +21,7 @@ class BoardMainActivity : AppCompatActivity() {
     val boardNameList = ArrayList<String>()
     val boardIndexList = ArrayList<Int>()
     var selectedBoardType = 0;
+    var readContentIdx = 0;
 
     val permissionList = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,

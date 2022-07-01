@@ -1,9 +1,6 @@
 package com.example.app3_communityapp
 
-import android.graphics.BlendMode
-import android.graphics.BlendModeColorFilter
-import android.graphics.Color
-import android.graphics.PorterDuff
+import android.graphics.*
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,6 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.app3_communityapp.databinding.FragmentBoardReadBinding
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONObject
+import java.net.URL
+import kotlin.concurrent.thread
 
 
 class BoardReadFragment : Fragment() {
@@ -46,9 +49,9 @@ class BoardReadFragment : Fragment() {
 
         // 백 버튼 클릭스 뒤로가기기
        boardReadFragmentBinding.boardReadToolbar.setNavigationOnClickListener {
-            val act = activity as BoardMainActivity
-            act.fragmentRemoveBackStack("board_read")
-        }
+           val act = activity as BoardMainActivity
+           act.fragmentRemoveBackStack("board_read")
+       }
 
         boardReadFragmentBinding.boardReadToolbar.inflateMenu(R.menu.board_read_menu)
 
@@ -64,11 +67,50 @@ class BoardReadFragment : Fragment() {
                     act.fragmentRemoveBackStack("board_read")
                     true
                 }
-
-
                 else -> false
 
             }
+        }
+        thread {
+            val client = OkHttpClient()
+
+            val site = "http://${ServerInfo.SERVER_IP}:8080/get_content"
+
+            val act = activity as BoardMainActivity
+
+            val builder1 = FormBody.Builder()
+            builder1.add("read_content_idx","${act.readContentIdx}")
+            val formBody = builder1.build()
+
+            val request = Request.Builder().url(site).post(formBody).build()
+            val response = client.newCall(request).execute()
+
+            if(response.isSuccessful){
+                val resultText = response.body?.string()!!.trim()
+                val obj = JSONObject(resultText)
+
+                act?.runOnUiThread {
+                    boardReadFragmentBinding.boardReadSubject.text = obj.getString("content_subject")
+                    boardReadFragmentBinding.boardReadWriter.text = obj.getString("content_nick_name")
+                    boardReadFragmentBinding.boardReadWriteDate.text = obj.getString("content_write_date")
+                    boardReadFragmentBinding.boardReadText.text = obj.getString("content_text")
+
+                    val contentImage = obj.getString("content_image")
+                    if(contentImage =="null"){
+                        boardReadFragmentBinding.boardReadImage.visibility = View.GONE
+                    }else{
+                        thread {
+                            val imageUrl = URL("http://${ServerInfo.SERVER_IP}:8080/upload/$contentImage")
+                            val bitmap = BitmapFactory.decodeStream(imageUrl.openConnection().getInputStream())
+                            act?.runOnUiThread {
+                                boardReadFragmentBinding.boardReadImage.setImageBitmap(bitmap)
+                            }
+                        }
+                    }
+
+                }
+            }
+
         }
 
         return boardReadFragmentBinding.root
