@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -21,9 +22,12 @@ import androidx.core.content.FileProvider
 import com.example.app3_communityapp.databinding.FragmentBoardMainBinding
 import com.example.app3_communityapp.databinding.FragmentBoardWriteBinding
 import okhttp3.FormBody
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import java.io.FileOutputStream
 import kotlin.concurrent.thread
 
 
@@ -35,6 +39,7 @@ class BoardWriteFragment : Fragment() {
     var spinner_data = arrayOf("게시판1","게시판2","게시판3","게시판4")
 
     lateinit var contentUri : Uri
+    var uploadImage :Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,19 +126,35 @@ class BoardWriteFragment : Fragment() {
                         val clinet = OkHttpClient()
 
                         val site = "http://${ServerInfo.SERVER_IP}:8080/add_content"
-                        val builder1 = FormBody.Builder()
-                        builder1.add("content_board_idx","$boardWriteType")
-                        builder1.add("content_writer_idx","$boardWriterIdx")
-                        builder1.add("content_subject",boardWriteSubject)
-                        builder1.add("content_text",boardWriteText)
+                        val builder1 = MultipartBody.Builder()
+                        builder1.setType(MultipartBody.FORM)
+                        builder1.addFormDataPart("content_board_idx","$boardWriteType")
+                        builder1.addFormDataPart("content_writer_idx","$boardWriterIdx")
+                        builder1.addFormDataPart("content_subject",boardWriteSubject)
+                        builder1.addFormDataPart("content_text",boardWriteText)
+
+                        var file : File? = null
+
+                        if(uploadImage !=null){
+                            val filePath = requireContext().getExternalFilesDir(null).toString()
+                            val fileName = "/temp_${System.currentTimeMillis()}.jpg"
+                            val picPath= "$filePath/$fileName"
+                            file = File(picPath)
+                            val fos = FileOutputStream(picPath)
+                            uploadImage?.compress(Bitmap.CompressFormat.JPEG, 100 , fos)
+
+                            builder1.addFormDataPart("content_image",file.name,file.asRequestBody(MultipartBody.FORM))
+                        }
+
+
                         val formBody = builder1.build()
 
                         val request = Request.Builder().url(site).post(formBody).build()
                         val response = clinet.newCall(request).execute()
 
                         if (response.isSuccessful) {
-                            activity?.runOnUiThread {
-                                val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                            act?.runOnUiThread {
+                                val inputMethodManager = act!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                 // 포커스 해제
                                 inputMethodManager.hideSoftInputFromWindow(
                                     boardWriteFragmentBinding.boardWriteSubject.windowToken,
@@ -144,7 +165,7 @@ class BoardWriteFragment : Fragment() {
                                     0
                                 )
 
-                                val dialogBuilder = AlertDialog.Builder(requireContext())
+                                val dialogBuilder = AlertDialog.Builder(act!!)
                                 dialogBuilder.setTitle("작성 완료")
                                 dialogBuilder.setMessage("작성이 완료되었습니다")
                                 dialogBuilder.setPositiveButton("확인") { dialogInterface: DialogInterface, i: Int ->
@@ -155,8 +176,8 @@ class BoardWriteFragment : Fragment() {
                             }
 
                         } else {
-                            activity?.runOnUiThread {
-                                val dialogBuilder = AlertDialog.Builder(requireContext())
+                            act?.runOnUiThread {
+                                val dialogBuilder = AlertDialog.Builder(act!!)
                                 dialogBuilder.setTitle("작성 오류")
                                 dialogBuilder.setMessage("작성 오류가 발생하였습니다")
                                 dialogBuilder.setPositiveButton("확인",null)
@@ -196,8 +217,8 @@ class BoardWriteFragment : Fragment() {
         when (requestCode) {
             1 -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    val bitmap = BitmapFactory.decodeFile(contentUri.path)
-                    boardWriteFragmentBinding.boardWriteImage.setImageBitmap(bitmap)
+                    uploadImage = BitmapFactory.decodeFile(contentUri.path)
+                    boardWriteFragmentBinding.boardWriteImage.setImageBitmap(uploadImage)
 
                     val file = File(contentUri.path)
                     file.delete()
@@ -212,8 +233,8 @@ class BoardWriteFragment : Fragment() {
                     if (uri != null) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             val source = ImageDecoder.createSource(activity?.contentResolver!!, uri)
-                            val bitmap = ImageDecoder.decodeBitmap(source)
-                            boardWriteFragmentBinding.boardWriteImage.setImageBitmap(bitmap)
+                            uploadImage = ImageDecoder.decodeBitmap(source)
+                            boardWriteFragmentBinding.boardWriteImage.setImageBitmap(uploadImage)
                         } else {
                             val cursor = activity?.contentResolver?.query(uri,null,null,null,null)
                             if (cursor != null) {
@@ -221,8 +242,8 @@ class BoardWriteFragment : Fragment() {
                                 // 이미지 경로를 가져온다
                                 val index = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
                                 val source = cursor.getString(index)
-                                val bitmap = BitmapFactory.decodeFile(source)
-                                boardWriteFragmentBinding.boardWriteImage.setImageBitmap(bitmap)
+                                uploadImage = BitmapFactory.decodeFile(source)
+                                boardWriteFragmentBinding.boardWriteImage.setImageBitmap(uploadImage)
                             }
                         }
                     }
