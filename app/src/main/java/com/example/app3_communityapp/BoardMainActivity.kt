@@ -1,5 +1,6 @@
 package com.example.app3_communityapp
 
+import android.Manifest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -21,12 +22,19 @@ class BoardMainActivity : AppCompatActivity() {
     val boardIndexList = ArrayList<Int>()
     var selectedBoardType = 0;
 
+    val permissionList = arrayOf(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.ACCESS_MEDIA_LOCATION
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
 
         boardMainActivityBinding = ActivityBoardMainBinding.inflate(layoutInflater)
         setContentView(boardMainActivityBinding.root)
+
+        requestPermissions(permissionList,0)
 
         boardNameList.add("전체 게시판")
         boardIndexList.add(0)
