@@ -12,14 +12,26 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.app3_communityapp.databinding.BoardMainRecyclerItemBinding
 import com.example.app3_communityapp.databinding.FragmentBoardMainBinding
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONArray
+import kotlin.concurrent.thread
 
 
 class BoardMainFragment : Fragment() {
 
     lateinit var boardMainFragemntBinding : FragmentBoardMainBinding
+
+    val contentIdxList = ArrayList<Int>()
+    val contentWriterList = ArrayList<String>()
+    val contentWriterDateList = ArrayList<String>()
+    val contentSubjectList = ArrayList<String>()
+
     val boardListData = arrayOf(
         "전체글","게시판1","게시판2","게시판3","게시판4",
     )
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +60,7 @@ class BoardMainFragment : Fragment() {
                     boardListBuilder.setNegativeButton("취소",null)
                     boardListBuilder.setItems(act.boardNameList.toTypedArray()){ dialogInterface: DialogInterface, i: Int ->
                         act.selectedBoardType = i
+                        getContentList(true)
                         boardMainFragemntBinding.boardMainToolbar.title = act.boardNameList[act.selectedBoardType]
                     }
                     boardListBuilder.show()
@@ -73,6 +86,8 @@ class BoardMainFragment : Fragment() {
         boardMainFragemntBinding.boardMainRecycler.layoutManager = LinearLayoutManager(requireContext())
         boardMainFragemntBinding.boardMainRecycler.addItemDecoration(DividerItemDecoration(requireContext(),1))
 
+        getContentList(false)
+
         return boardMainFragemntBinding.root
     }
 
@@ -96,19 +111,73 @@ class BoardMainFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: ViewHolderClass, position: Int) {
-
+            holder.boardMainItemNickname.text =  contentWriterList.get(position)
+            holder.boardMainItemWriteDate.text = contentWriterDateList[position]
+            holder.boardMainItemSubject.text =contentSubjectList[position]
         }
 
         override fun getItemCount(): Int {
-            return 10
+            return contentIdxList.size
         }
 
         inner class ViewHolderClass(boardMainRecyclerItemBinding: BoardMainRecyclerItemBinding) :
             RecyclerView.ViewHolder(boardMainRecyclerItemBinding.root), View.OnClickListener {
+
+            val boardMainItemNickname = boardMainRecyclerItemBinding.boardMainItemNickname
+            val boardMainItemSubject = boardMainRecyclerItemBinding.boardMainItemSubject
+            val boardMainItemWriteDate = boardMainRecyclerItemBinding.boardMainItemWriteDate
+
             override fun onClick(v: View?) {
                 val act = activity as BoardMainActivity
+
+                act.readContentIdx = contentIdxList[adapterPosition]
+
                 act.fragmentController("board_read",true,true)
             }
         }
     }
+
+    fun getContentList(clear:Boolean){
+        if(clear){
+            contentIdxList.clear()
+            contentWriterList.clear()
+            contentWriterDateList.clear()
+            contentSubjectList.clear()
+        }
+
+        thread {
+            val client = OkHttpClient()
+
+            val site = "http://${ServerInfo.SERVER_IP}:8080/get_content_list"
+
+            val act = activity as BoardMainActivity
+
+            val builder1 = FormBody.Builder()
+            builder1.add("content_board_idx", "${act.selectedBoardType}")
+            val formBody = builder1.build()
+
+            val request = Request.Builder().url(site).post(formBody).build()
+            val response = client.newCall(request).execute()
+
+            if(response.isSuccessful){
+                val resultText = response.body?.string()!!.trim()
+                val root = JSONArray(resultText)
+
+                for(i in 0 until root.length()){
+                    val obj = root.getJSONObject(i)
+
+                    contentIdxList.add(obj.getInt("content_idx"))
+                    contentWriterList.add(obj.getString("content_nick_name"))
+                    contentWriterDateList.add(obj.getString("content_write_date"))
+                    contentSubjectList.add(obj.getString("content_subject"))
+
+                }
+                act?.runOnUiThread {
+                    boardMainFragemntBinding.boardMainRecycler.adapter?.notifyDataSetChanged()
+                }
+
+            }
+        }
+    }
+
 }
