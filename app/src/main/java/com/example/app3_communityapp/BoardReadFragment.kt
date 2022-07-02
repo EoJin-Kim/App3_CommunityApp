@@ -1,6 +1,7 @@
 package com.example.app3_communityapp
 
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.*
 import android.os.Build
 import android.os.Bundle
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import com.example.app3_communityapp.databinding.FragmentBoardReadBinding
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
@@ -107,7 +109,38 @@ class BoardReadFragment : Fragment() {
                                     true
                                 }
                                 R.id.board_read_menu_delete -> {
+
+
+                                    thread {
+                                        val act = activity as BoardMainActivity
+
+                                        val client = OkHttpClient()
+
+                                        val site = "http://${ServerInfo.SERVER_IP}:8080/delete_content"
+
+                                        val builder1 = FormBody.Builder()
+                                        builder1.add("content_idx","${act.readContentIdx}")
+                                        val formBody = builder1.build()
+
+                                        val request = Request.Builder().url(site).post(formBody).build()
+                                        val response = client.newCall(request).execute()
+
+                                        if(response.isSuccessful){
+                                            act.runOnUiThread {
+                                                val dialogBuilder= AlertDialog.Builder(act!!)
+                                                dialogBuilder.setTitle("글 삭제")
+                                                dialogBuilder.setMessage("글이 삭제되었습니다")
+                                                dialogBuilder.setPositiveButton("확인"){ dialogInterface: DialogInterface, i: Int ->
+//                                                    val act = activity as BoardMainActivity
+                                                    act.fragmentRemoveBackStack("board_read")
+                                                }
+                                                dialogBuilder.show()
+                                            }
+
+                                        }
+                                    }
                                     val act = activity as BoardMainActivity
+
                                     act.fragmentRemoveBackStack("board_read")
                                     true
                                 }

@@ -86,7 +86,7 @@ class BoardMainFragment : Fragment() {
         boardMainFragemntBinding.boardMainRecycler.layoutManager = LinearLayoutManager(requireContext())
         boardMainFragemntBinding.boardMainRecycler.addItemDecoration(DividerItemDecoration(requireContext(),1))
 
-        getContentList(false)
+        getContentList(true)
 
         return boardMainFragemntBinding.root
     }
