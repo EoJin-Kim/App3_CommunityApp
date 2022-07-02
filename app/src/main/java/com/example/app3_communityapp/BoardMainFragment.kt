@@ -3,6 +3,7 @@ package com.example.app3_communityapp
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -85,8 +86,33 @@ class BoardMainFragment : Fragment() {
 
         boardMainFragemntBinding.boardMainRecycler.layoutManager = LinearLayoutManager(requireContext())
         boardMainFragemntBinding.boardMainRecycler.addItemDecoration(DividerItemDecoration(requireContext(),1))
+        boardMainFragemntBinding.boardMainRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                // 현재 화면에 보이는 항목 중제일 마직 항목의 인덱스
+                val index1 = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+
+                // 리사이클러 뷰가 관리하는 항목의 총 개수
+                val count1 = recyclerView.adapter?.itemCount
+
+                Log.d("test","${index1+1} : ${count1}")
+                if(index1 +1 ==count1){
+                    act.nowPage+=1
+                    getContentList(false)
+                }
+            }
+        })
 
         getContentList(true)
+
+        boardMainFragemntBinding.boardMainSwipe.setOnRefreshListener {
+            // 새로고침 동안 해야하는 작업
+            getContentList(true);
+
+            // 작업 끝나면 false
+            boardMainFragemntBinding.boardMainSwipe.isRefreshing = false
+        }
 
         return boardMainFragemntBinding.root
     }
@@ -143,6 +169,9 @@ class BoardMainFragment : Fragment() {
             contentWriterList.clear()
             contentWriterDateList.clear()
             contentSubjectList.clear()
+
+            val act = activity as BoardMainActivity
+            act.nowPage = 1;
         }
 
         thread {
@@ -154,6 +183,7 @@ class BoardMainFragment : Fragment() {
 
             val builder1 = FormBody.Builder()
             builder1.add("content_board_idx", "${act.selectedBoardType}")
+            builder1.add("page_num","${act.nowPage}")
             val formBody = builder1.build()
 
             val request = Request.Builder().url(site).post(formBody).build()
@@ -171,6 +201,11 @@ class BoardMainFragment : Fragment() {
                     contentWriterDateList.add(obj.getString("content_write_date"))
                     contentSubjectList.add(obj.getString("content_subject"))
 
+                }
+
+                // 만약 가져온 것이 하나도 없다면 존재하지 않는 페이지 이므로 페이지를 하나 빼준다.
+                if(root.length() ==0){
+                    act.nowPage -=1;
                 }
                 act?.runOnUiThread {
                     boardMainFragemntBinding.boardMainRecycler.adapter?.notifyDataSetChanged()
