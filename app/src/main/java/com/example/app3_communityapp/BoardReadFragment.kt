@@ -1,5 +1,6 @@
 package com.example.app3_communityapp
 
+import android.content.Context
 import android.graphics.*
 import android.os.Build
 import android.os.Bundle
@@ -53,24 +54,7 @@ class BoardReadFragment : Fragment() {
            act.fragmentRemoveBackStack("board_read")
        }
 
-        boardReadFragmentBinding.boardReadToolbar.inflateMenu(R.menu.board_read_menu)
 
-        boardReadFragmentBinding.boardReadToolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.board_read_menu_modify -> {
-                    val act = activity as BoardMainActivity
-                    act.fragmentController("board_modify", true,true)
-                    true
-                }
-                R.id.board_read_menu_delete -> {
-                    val act = activity as BoardMainActivity
-                    act.fragmentRemoveBackStack("board_read")
-                    true
-                }
-                else -> false
-
-            }
-        }
         thread {
             val client = OkHttpClient()
 
@@ -88,6 +72,8 @@ class BoardReadFragment : Fragment() {
             if(response.isSuccessful){
                 val resultText = response.body?.string()!!.trim()
                 val obj = JSONObject(resultText)
+
+                val contentWriterIdx = obj.getInt("content_writer_idx")
 
                 act?.runOnUiThread {
                     boardReadFragmentBinding.boardReadSubject.text = obj.getString("content_subject")
@@ -107,6 +93,30 @@ class BoardReadFragment : Fragment() {
                             }
                         }
                     }
+
+                    val pref = act.getSharedPreferences("login_data",Context.MODE_PRIVATE)
+                    val loginUserIdx = pref.getInt("login_user_idx" ,-1)
+
+                    if(loginUserIdx == contentWriterIdx){
+                        boardReadFragmentBinding.boardReadToolbar.inflateMenu(R.menu.board_read_menu)
+                        boardReadFragmentBinding.boardReadToolbar.setOnMenuItemClickListener {
+                            when (it.itemId) {
+                                R.id.board_read_menu_modify -> {
+                                    val act = activity as BoardMainActivity
+                                    act.fragmentController("board_modify", true,true)
+                                    true
+                                }
+                                R.id.board_read_menu_delete -> {
+                                    val act = activity as BoardMainActivity
+                                    act.fragmentRemoveBackStack("board_read")
+                                    true
+                                }
+                                else -> false
+
+                            }
+                        }
+                    }
+
 
                 }
             }

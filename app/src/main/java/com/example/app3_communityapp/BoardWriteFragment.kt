@@ -20,7 +20,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
-import com.example.app3_communityapp.databinding.FragmentBoardMainBinding
 import com.example.app3_communityapp.databinding.FragmentBoardWriteBinding
 import okhttp3.FormBody
 import okhttp3.MultipartBody
