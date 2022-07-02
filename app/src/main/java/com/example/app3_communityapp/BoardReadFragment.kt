@@ -77,7 +77,7 @@ class BoardReadFragment : Fragment() {
 
                 val contentWriterIdx = obj.getInt("content_writer_idx")
 
-                act?.runOnUiThread {
+                act.runOnUiThread {
                     boardReadFragmentBinding.boardReadSubject.text = obj.getString("content_subject")
                     boardReadFragmentBinding.boardReadWriter.text = obj.getString("content_nick_name")
                     boardReadFragmentBinding.boardReadWriteDate.text = obj.getString("content_write_date")
